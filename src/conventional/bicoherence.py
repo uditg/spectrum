@@ -45,10 +45,10 @@ def bicoherence(y, nfft=None, wind=None, nsamp=None, overlap=None):
   if not nsamp: nsamp = 0
   if nrecs > 1: nsamp = ly
 
-  if nrecs > 1 and nsamp <= 0:
+  if nrecs == 1 and nsamp <= 0:
     nsamp = np.fix(ly / (8 - 7 * overlap/100))
   if nfft  < nsamp:
-    nfft = 2**nextpow2(nsamp)
+    nfft = nextpow2(nsamp)
 
   overlap  = np.fix(nsamp * overlap/100)
   nadvance = nsamp - overlap
@@ -80,7 +80,7 @@ def bicoherence(y, nfft=None, wind=None, nsamp=None, overlap=None):
 
   mask = hankel(np.arange(nfft),np.array([nfft-1]+range(nfft-1)))
   Yf12 = np.zeros([nfft,nfft])
-  ind  = np.arange(nsamp)
+  ind  = np.arange(nsamp, dtype=np.int32)
   y = y.ravel(order='F')
 
   for k in xrange(nrecs):
@@ -108,16 +108,16 @@ def bicoherence(y, nfft=None, wind=None, nsamp=None, overlap=None):
   else:
     waxis = np.transpose(np.arange(-1*(nfft-1)/2, (nfft-1)/2+1)) / nfft
 
-  cont = plt.contourf(waxis,waxis,bic,100, cmap=plt.cm.Spectral_r)
-  plt.colorbar(cont)
-  plt.title('Bicoherence estimated via the direct (FFT) method')
-  plt.xlabel('f1')
-  plt.ylabel('f2')
-
-  colmax, row = bic.max(0), bic.argmax(0)
-  maxval, col = colmax.max(0), colmax.argmax(0)
-  print 'Max: bic('+str(waxis[col])+','+str(waxis[col])+') = '+str(maxval)
-  plt.show()
+  # cont = plt.contourf(waxis,waxis,bic,100, cmap=plt.cm.Spectral_r)
+  # plt.colorbar(cont)
+  # plt.title('Bicoherence estimated via the direct (FFT) method')
+  # plt.xlabel('f1')
+  # plt.ylabel('f2')
+  #
+  # colmax, row = bic.max(0), bic.argmax(0)
+  # maxval, col = colmax.max(0), colmax.argmax(0)
+  # print 'Max: bic('+str(waxis[col])+','+str(waxis[col])+') = '+str(maxval)
+  # plt.show()
 
   return (bic, waxis)
 
